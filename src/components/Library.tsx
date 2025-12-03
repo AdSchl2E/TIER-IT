@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import DraggableImage from './DraggableImage';
 import { ImageItem } from '../hooks/useDragManager';
 import { PlusIcon, TrashIcon } from './Icons';
@@ -21,9 +21,6 @@ const Library: React.FC<LibraryProps> = ({
   draggedItemId,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [showButtonsForId, setShowButtonsForId] = useState<string | null>(null);
-  const hideTimeoutRef = useRef<number | null>(null);
-  const dragStartedRef = useRef(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -33,27 +30,6 @@ const Library: React.FC<LibraryProps> = ({
 
   const handleButtonClick = () => {
     fileInputRef.current?.click();
-  };
-
-  const handleImageTap = (imageId: string) => {
-    // Don't show buttons if a drag just occurred
-    if (dragStartedRef.current) {
-      dragStartedRef.current = false;
-      return;
-    }
-    
-    // Clear existing timeout
-    if (hideTimeoutRef.current) {
-      clearTimeout(hideTimeoutRef.current);
-    }
-    
-    // Show buttons for this image
-    setShowButtonsForId(imageId);
-    
-    // Hide after 2 seconds
-    hideTimeoutRef.current = window.setTimeout(() => {
-      setShowButtonsForId(null);
-    }, 2000);
   };
 
   return (
@@ -136,33 +112,16 @@ const Library: React.FC<LibraryProps> = ({
           </div>
         ) : (
           images.map((item) => (
-            <div 
-              key={item.id} 
-              className="relative w-20 h-20 flex-shrink-0"
-              onClick={() => handleImageTap(item.id)}
-            >
+            <div key={item.id} className="relative group w-20 h-20 flex-shrink-0">
               <DraggableImage
                 item={item}
-                onDragStart={(e) => {
-                  dragStartedRef.current = true;
-                  onDragStart(e, item);
-                }}
-                onDragEnd={(e) => {
-                  onDragEnd(e);
-                  setTimeout(() => {
-                    dragStartedRef.current = false;
-                  }, 100);
-                }}
+                onDragStart={onDragStart}
+                onDragEnd={onDragEnd}
                 isDragging={item.id === draggedItemId}
               />
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onImageDelete(item.id);
-                }}
-                className={`absolute top-1 right-1 p-1 bg-red-500 hover:bg-red-600 text-white rounded transition-opacity ${
-                  showButtonsForId === item.id ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-                }`}
+                onClick={() => onImageDelete(item.id)}
+                className="absolute top-1 right-1 p-1 bg-red-500 hover:bg-red-600 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
               >
                 <TrashIcon />
               </button>
