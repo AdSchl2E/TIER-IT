@@ -54,15 +54,25 @@ const TierRow: React.FC<TierRowProps> = ({
 
     const rect = rowRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
     
-    // Calculate drop position based on mouse position
+    // Calculate drop position based on mouse position with wrap support
     let calculatedIndex = 0;
     const itemWidth = 88; // 80px + 8px gap
+    const itemHeight = 88; // 80px + 8px gap
     
     if (items.length === 0) {
       calculatedIndex = 0;
     } else {
-      calculatedIndex = Math.floor(x / itemWidth);
+      // Calculate row and column
+      const row = Math.floor(y / itemHeight);
+      const col = Math.floor(x / itemWidth);
+      
+      // Calculate items per row based on container width
+      const itemsPerRow = Math.floor(rect.width / itemWidth);
+      
+      // Calculate index
+      calculatedIndex = row * itemsPerRow + col;
       calculatedIndex = Math.max(0, Math.min(calculatedIndex, items.length));
     }
 

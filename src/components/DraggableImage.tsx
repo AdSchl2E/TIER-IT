@@ -15,9 +15,9 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
   isDragging = false,
 }) => {
   const [isMobile, setIsMobile] = useState(false);
-  const [isPressing, setIsPressing] = useState(false);
-  const [canDrag, setCanDrag] = useState(false);
-  const pressTimerRef = useRef<number | null>(null);
+  const [longPressTriggered, setLongPressTriggered] = useState(false);
+  const timeoutRef = useRef<number | null>(null);
+  const elementRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -29,45 +29,71 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  const handleTouchStart = () => {
+  const handleMouseDown = (e: React.MouseEvent) => {
     if (!isMobile) return;
     
-    setIsPressing(true);
-    pressTimerRef.current = window.setTimeout(() => {
-      setCanDrag(true);
-      setIsPressing(false);
-      // Vibration feedback if available
+    timeoutRef.current = window.setTimeout(() => {
+      setLongPressTriggered(true);
       if (navigator.vibrate) {
         navigator.vibrate(50);
       }
-    }, 150); // Reduced from default ~500ms to 150ms
+      
+      // Simulate drag start
+      if (elementRef.current) {
+        const dragEvent = new DragEvent('dragstart', {
+          bubbles: true,
+          cancelable: true,
+        });
+        elementRef.current.dispatchEvent(dragEvent);
+      }
+    }, 200);
+  };
+
+  const handleMouseUp = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+    setLongPressTriggered(false);
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!isMobile) return;
+    
+    timeoutRef.current = window.setTimeout(() => {
+      setLongPressTriggered(true);
+      if (navigator.vibrate) {
+        navigator.vibrate(50);
+      }
+    }, 200);
   };
 
   const handleTouchEnd = () => {
-    if (pressTimerRef.current) {
-      clearTimeout(pressTimerRef.current);
-      pressTimerRef.current = null;
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
     }
-    setIsPressing(false);
-    setCanDrag(false);
+    setTimeout(() => setLongPressTriggered(false), 100);
   };
 
-  const handleDragStart = (e: React.DragEvent) => {
-    if (isMobile && !canDrag) {
-      e.preventDefault();
-      return;
-    }
-    onDragStart(e, item);
-  };
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div
-      draggable
-      onDragStart={handleDragStart}
+      ref={elementRef}
+      draggable={!isMobile || longPressTriggered}
+      onDragStart={(e) => onDragStart(e, item)}
       onDragEnd={(e) => {
         onDragEnd(e);
-        handleTouchEnd();
+        setLongPressTriggered(false);
       }}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       onTouchCancel={handleTouchEnd}
@@ -77,8 +103,7 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
         bg-white dark:bg-gray-800
         shadow-md hover:shadow-xl
         ${isDragging ? 'opacity-40 scale-95' : 'opacity-100 scale-100'}
-        ${isPressing ? 'scale-95 ring-2 ring-blue-400' : ''}
-        ${canDrag ? 'ring-2 ring-green-400' : ''}
+        ${longPressTriggered ? 'scale-110 z-50' : ''}
       `}
     >
       <img
