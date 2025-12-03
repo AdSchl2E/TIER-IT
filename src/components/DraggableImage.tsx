@@ -33,6 +33,24 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Add native touch event listener to prevent default with passive: false
+  useEffect(() => {
+    const element = elementRef.current;
+    if (!element || !isMobile) return;
+
+    const handleNativeTouchMove = (e: TouchEvent) => {
+      if (pressProgress > 0 || longPressTriggered) {
+        e.preventDefault();
+      }
+    };
+
+    element.addEventListener('touchmove', handleNativeTouchMove, { passive: false });
+    
+    return () => {
+      element.removeEventListener('touchmove', handleNativeTouchMove);
+    };
+  }, [isMobile, pressProgress, longPressTriggered]);
+
   const clearAllStates = () => {
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -67,8 +85,13 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
-      if (navigator.vibrate) {
-        navigator.vibrate(50);
+      // Try to vibrate, but ignore if blocked by browser
+      try {
+        if (navigator.vibrate) {
+          navigator.vibrate(50);
+        }
+      } catch (e) {
+        // Vibration blocked by browser policy - this is fine
       }
     }, 500);
   };
@@ -96,8 +119,13 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
         clearInterval(intervalRef.current);
         intervalRef.current = null;
       }
-      if (navigator.vibrate) {
-        navigator.vibrate(50);
+      // Try to vibrate, but ignore if blocked by browser
+      try {
+        if (navigator.vibrate) {
+          navigator.vibrate(50);
+        }
+      } catch (e) {
+        // Vibration blocked by browser policy - this is fine
       }
     }, 500);
   };
@@ -156,6 +184,7 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
         shadow-md hover:shadow-xl
         ${showDraggingStyle ? 'opacity-40 scale-95' : 'opacity-100 scale-100'}
         ${longPressTriggered && !actuallyDragging ? 'scale-110 z-50' : ''}
+        ${pressProgress > 0 ? 'touch-none' : ''}
       `}
       style={{
         boxShadow: pressProgress > 0 && !actuallyDragging

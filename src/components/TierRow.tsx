@@ -53,6 +53,8 @@ const TierRow: React.FC<TierRowProps> = ({
   const [showImageButtonsForId, setShowImageButtonsForId] = useState<string | null>(null);
   const tierButtonsTimeoutRef = useRef<number | null>(null);
   const imageButtonsTimeoutRef = useRef<number | null>(null);
+  const tierDragStartedRef = useRef(false);
+  const imageDragStartedRef = useRef(false);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -122,6 +124,12 @@ const TierRow: React.FC<TierRowProps> = ({
   };
 
   const handleTierLabelTap = () => {
+    // Don't show buttons if a drag just occurred
+    if (tierDragStartedRef.current) {
+      tierDragStartedRef.current = false;
+      return;
+    }
+    
     // Clear existing timeout
     if (tierButtonsTimeoutRef.current) {
       clearTimeout(tierButtonsTimeoutRef.current);
@@ -137,6 +145,12 @@ const TierRow: React.FC<TierRowProps> = ({
   };
 
   const handleImageTap = (imageId: string) => {
+    // Don't show buttons if a drag just occurred
+    if (imageDragStartedRef.current) {
+      imageDragStartedRef.current = false;
+      return;
+    }
+    
     // Clear existing timeout
     if (imageButtonsTimeoutRef.current) {
       clearTimeout(imageButtonsTimeoutRef.current);
@@ -255,8 +269,16 @@ const TierRow: React.FC<TierRowProps> = ({
                 >
                   <DraggableImage
                     item={item}
-                    onDragStart={(e) => onDragStart(e, item, tierId, index)}
-                    onDragEnd={onDragEnd}
+                    onDragStart={(e) => {
+                      imageDragStartedRef.current = true;
+                      onDragStart(e, item, tierId, index);
+                    }}
+                    onDragEnd={(e) => {
+                      onDragEnd(e);
+                      setTimeout(() => {
+                        imageDragStartedRef.current = false;
+                      }, 100);
+                    }}
                     isDragging={item.id === draggedItemId}
                   />
                   <button

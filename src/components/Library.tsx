@@ -23,6 +23,7 @@ const Library: React.FC<LibraryProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [showButtonsForId, setShowButtonsForId] = useState<string | null>(null);
   const hideTimeoutRef = useRef<number | null>(null);
+  const dragStartedRef = useRef(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -35,6 +36,12 @@ const Library: React.FC<LibraryProps> = ({
   };
 
   const handleImageTap = (imageId: string) => {
+    // Don't show buttons if a drag just occurred
+    if (dragStartedRef.current) {
+      dragStartedRef.current = false;
+      return;
+    }
+    
     // Clear existing timeout
     if (hideTimeoutRef.current) {
       clearTimeout(hideTimeoutRef.current);
@@ -136,8 +143,16 @@ const Library: React.FC<LibraryProps> = ({
             >
               <DraggableImage
                 item={item}
-                onDragStart={onDragStart}
-                onDragEnd={onDragEnd}
+                onDragStart={(e) => {
+                  dragStartedRef.current = true;
+                  onDragStart(e, item);
+                }}
+                onDragEnd={(e) => {
+                  onDragEnd(e);
+                  setTimeout(() => {
+                    dragStartedRef.current = false;
+                  }, 100);
+                }}
                 isDragging={item.id === draggedItemId}
               />
               <button
