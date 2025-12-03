@@ -17,11 +17,8 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
   const [isMobile, setIsMobile] = useState(false);
   const [longPressTriggered, setLongPressTriggered] = useState(false);
   const [actuallyDragging, setActuallyDragging] = useState(false);
-  const [pressProgress, setPressProgress] = useState(0);
   const timeoutRef = useRef<number | null>(null);
-  const intervalRef = useRef<number | null>(null);
   const elementRef = useRef<HTMLDivElement>(null);
-  const pressStartTime = useRef<number>(0);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -38,39 +35,19 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
     }
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
     setLongPressTriggered(false);
     setActuallyDragging(false);
-    setPressProgress(0);
   };
 
   const handleMouseDown = () => {
     if (!isMobile) return;
     
-    pressStartTime.current = Date.now();
-    setPressProgress(0);
-    
-    // Update progress every 16ms (60fps)
-    intervalRef.current = window.setInterval(() => {
-      const elapsed = Date.now() - pressStartTime.current;
-      const progress = Math.min(elapsed / 500, 1); // 500ms duration
-      setPressProgress(progress);
-    }, 16);
-    
     timeoutRef.current = window.setTimeout(() => {
       setLongPressTriggered(true);
-      setPressProgress(1);
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
       if (navigator.vibrate) {
         navigator.vibrate(50);
       }
-    }, 500);
+    }, 200);
   };
 
   const handleMouseUp = () => {
@@ -80,26 +57,12 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
   const handleTouchStart = () => {
     if (!isMobile) return;
     
-    pressStartTime.current = Date.now();
-    setPressProgress(0);
-    
-    intervalRef.current = window.setInterval(() => {
-      const elapsed = Date.now() - pressStartTime.current;
-      const progress = Math.min(elapsed / 500, 1);
-      setPressProgress(progress);
-    }, 16);
-    
     timeoutRef.current = window.setTimeout(() => {
       setLongPressTriggered(true);
-      setPressProgress(1);
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
       if (navigator.vibrate) {
         navigator.vibrate(50);
       }
-    }, 500);
+    }, 200);
   };
 
   const handleTouchEnd = () => {
@@ -121,9 +84,6 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
     };
   }, []);
 
@@ -135,7 +95,6 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
   }, [isDragging]);
 
   const showDraggingStyle = isDragging && actuallyDragging;
-  const borderOpacity = pressProgress;
 
   return (
     <div
@@ -155,13 +114,8 @@ const DraggableImage: React.FC<DraggableImageProps> = ({
         bg-white dark:bg-gray-800
         shadow-md hover:shadow-xl
         ${showDraggingStyle ? 'opacity-40 scale-95' : 'opacity-100 scale-100'}
-        ${longPressTriggered && !actuallyDragging ? 'scale-110 z-50' : ''}
+        ${longPressTriggered && !actuallyDragging ? 'scale-110 ring-2 ring-green-400 z-50' : ''}
       `}
-      style={{
-        boxShadow: pressProgress > 0 && !actuallyDragging
-          ? `0 0 0 ${2 + pressProgress * 2}px rgba(34, 197, 94, ${borderOpacity})` 
-          : undefined
-      }}
     >
       <img
         src={item.url}
