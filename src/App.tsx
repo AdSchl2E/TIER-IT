@@ -4,7 +4,7 @@ import TierList from './components/TierList';
 import { useDragManager, ImageItem, TierData } from './hooks/useDragManager';
 import { useTheme } from './context/ThemeContext';
 import { compressImage } from './utils/imageCompression';
-import { SunIcon, MoonIcon, PlusIcon, DownloadIcon, AppIcon, SaveIcon, LoadIcon } from './components/Icons';
+import { SunIcon, MoonIcon, PlusIcon, DownloadIcon, AppIcon, SaveIcon, LoadIcon, ShareIcon } from './components/Icons';
 
 const initialTiers: TierData[] = [
   { id: 's', name: 'S', color: '#ff7f7f', items: [] },
@@ -280,31 +280,31 @@ function App() {
           <div className="flex gap-2">
             <button
               onClick={handleSaveTierList}
-              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
+              className="px-3 lg:px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
             >
               <SaveIcon />
-              Save
+              <span className="hidden lg:inline">Save</span>
             </button>
             <button
               onClick={handleLoadTierList}
-              className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
+              className="px-3 lg:px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
             >
               <LoadIcon />
-              Load
+              <span className="hidden lg:inline">Load</span>
             </button>
             <button
               onClick={handleExportImage}
-              className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
+              className="px-3 lg:px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
             >
-              <DownloadIcon />
-              Export
+              <ShareIcon />
+              <span className="hidden lg:inline">Share</span>
             </button>
             <button
               onClick={toggleTheme}
-              className="px-4 py-2 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-900 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
+              className="px-3 lg:px-4 py-2 bg-gray-800 dark:bg-gray-200 text-white dark:text-gray-900 rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
             >
               {theme === 'light' ? <MoonIcon /> : <SunIcon />}
-              {theme === 'light' ? 'Dark' : 'Light'}
+              <span className="hidden lg:inline">{theme === 'light' ? 'Dark' : 'Light'}</span>
             </button>
           </div>
         </div>

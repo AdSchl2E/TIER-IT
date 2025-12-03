@@ -111,7 +111,7 @@ const TierRow: React.FC<TierRowProps> = ({
                 value={editName}
                 onChange={(e) => setEditName(e.target.value)}
                 className="w-full px-2 py-1 text-sm text-gray-900 rounded"
-                maxLength={5}
+                maxLength={30}
               />
               <input
                 type="color"

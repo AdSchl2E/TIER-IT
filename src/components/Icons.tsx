@@ -69,7 +69,7 @@ export const TrashIcon = () => (
   </svg>
 );
 
-export const DownloadIcon = () => (
+export const LoadIcon = () => (
   <svg 
     width="20" 
     height="20" 
@@ -79,6 +79,39 @@ export const DownloadIcon = () => (
   >
     <path 
       d="M3 13V15C3 16.1 3.9 17 5 17H15C16.1 17 17 16.1 17 15V13M10 3V13M10 13L6 9M10 13L14 9" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+export const ShareIcon = () => (
+  <svg 
+    width="20" 
+    height="20" 
+    viewBox="0 0 20 20" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <rect 
+      x="2" 
+      y="4" 
+      width="16" 
+      height="13" 
+      rx="1.5" 
+      stroke="currentColor" 
+      strokeWidth="2"
+    />
+    <circle 
+      cx="6" 
+      cy="8" 
+      r="1.5" 
+      fill="currentColor"
+    />
+    <path 
+      d="M2 14L6 10L10 14L14 10L18 14" 
       stroke="currentColor" 
       strokeWidth="2" 
       strokeLinecap="round"
@@ -155,24 +188,6 @@ export const SaveIcon = () => (
     />
     <path 
       d="M14 2V7H6V2M6 18V11H14V18" 
-      stroke="currentColor" 
-      strokeWidth="2" 
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
-export const LoadIcon = () => (
-  <svg 
-    width="20" 
-    height="20" 
-    viewBox="0 0 20 20" 
-    fill="none" 
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path 
-      d="M3 9V3H9M17 11V17H11M3 3L8 8M17 17L12 12" 
       stroke="currentColor" 
       strokeWidth="2" 
       strokeLinecap="round"
