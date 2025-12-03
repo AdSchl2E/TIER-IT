@@ -21,6 +21,8 @@ interface TierRowProps {
   targetTierId: string | null;
   targetIndex: number | null;
   isDragOver?: boolean;
+  sourceTierId: string | null;
+  sourceIndex: number | null;
 }
 
 const TierRow: React.FC<TierRowProps> = ({
@@ -40,6 +42,8 @@ const TierRow: React.FC<TierRowProps> = ({
   targetTierId,
   targetIndex,
   isDragOver = false,
+  sourceTierId,
+  sourceIndex,
 }) => {
   const rowRef = useRef<HTMLDivElement>(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -74,6 +78,15 @@ const TierRow: React.FC<TierRowProps> = ({
       // Calculate index
       calculatedIndex = row * itemsPerRow + col;
       calculatedIndex = Math.max(0, Math.min(calculatedIndex, items.length));
+      
+      // Adjust index if dragging within the same tier and moving right
+      // When moving an item within the same tier, indices after the source position are shifted
+      if (sourceTierId === tierId && sourceIndex !== null) {
+        // If the target index is after the source index, we need to account for the removed item
+        if (calculatedIndex > sourceIndex) {
+          calculatedIndex = Math.min(calculatedIndex, items.length);
+        }
+      }
     }
 
     onDragOver(e, tierId);

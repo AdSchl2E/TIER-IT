@@ -50,7 +50,6 @@ const TierList: React.FC<TierListProps> = ({
 
   const handleDragStart = useCallback(
     (e: React.DragEvent, item: ImageItem, tierId: string, index: number) => {
-      e.dataTransfer.effectAllowed = 'move';
       onDragStart(item, 'tier', tierId, index);
     },
     [onDragStart]
@@ -81,8 +80,25 @@ const TierList: React.FC<TierListProps> = ({
       const targetTierIndex = newTiers.findIndex(t => t.id === targetTierId);
       if (targetTierIndex === -1) return;
 
-      // Remove from source
-      if (sourceType === 'tier' && sourceTierId) {
+      let adjustedTargetIndex = targetIndex;
+
+      // If moving within the same tier
+      if (sourceType === 'tier' && sourceTierId === targetTierId && sourceIndex !== null) {
+        // Remove from source position first
+        const sourceTierIndex = newTiers.findIndex(t => t.id === sourceTierId);
+        if (sourceTierIndex !== -1) {
+          newTiers[sourceTierIndex].items = newTiers[sourceTierIndex].items.filter(
+            (_, idx) => idx !== sourceIndex
+          );
+          
+          // Adjust target index: if we're moving right, the target index should be decreased by 1
+          // because we removed the item before inserting
+          if (targetIndex > sourceIndex) {
+            adjustedTargetIndex = targetIndex - 1;
+          }
+        }
+      } else if (sourceType === 'tier' && sourceTierId) {
+        // Remove from different tier
         const sourceTierIndex = newTiers.findIndex(t => t.id === sourceTierId);
         if (sourceTierIndex !== -1 && sourceIndex !== null) {
           newTiers[sourceTierIndex].items = newTiers[sourceTierIndex].items.filter(
@@ -93,7 +109,7 @@ const TierList: React.FC<TierListProps> = ({
 
       // Insert at target position
       const targetTier = newTiers[targetTierIndex];
-      const insertIndex = Math.min(targetIndex, targetTier.items.length);
+      const insertIndex = Math.min(adjustedTargetIndex, targetTier.items.length);
       
       targetTier.items = [
         ...targetTier.items.slice(0, insertIndex),
@@ -138,6 +154,8 @@ const TierList: React.FC<TierListProps> = ({
           targetTierId={targetTierId}
           targetIndex={targetIndex}
           isDragOver={dragOverTierId === tier.id}
+          sourceTierId={sourceTierId}
+          sourceIndex={sourceIndex}
         />
       ))}
     </div>
