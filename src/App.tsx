@@ -4,7 +4,7 @@ import TierList from './components/TierList';
 import { useDragManager, ImageItem, TierData } from './hooks/useDragManager';
 import { useTheme } from './context/ThemeContext';
 import { compressImage } from './utils/imageCompression';
-import { SunIcon, MoonIcon, PlusIcon, DownloadIcon, AppIcon, SaveIcon, LoadIcon, ShareIcon } from './components/Icons';
+import { SunIcon, MoonIcon, PlusIcon, AppIcon, SaveIcon, LoadIcon, ShareIcon } from './components/Icons';
 
 const initialTiers: TierData[] = [
   { id: 's', name: 'S', color: '#ff7f7f', items: [] },
