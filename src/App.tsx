@@ -4,7 +4,7 @@ import TierList from './components/TierList';
 import { useDragManager, ImageItem, TierData } from './hooks/useDragManager';
 import { useTheme } from './context/ThemeContext';
 import { compressImage } from './utils/imageCompression';
-import { SunIcon, MoonIcon, PlusIcon, AppIcon, SaveIcon, LoadIcon, ShareIcon } from './components/Icons';
+import { SunIcon, MoonIcon, PlusIcon, AppIcon, SaveIcon, LoadIcon, ShareIcon, ResetIcon } from './components/Icons';
 
 const initialTiers: TierData[] = [
   { id: 's', name: 'S', color: '#ff7f7f', items: [] },
@@ -248,6 +248,23 @@ function App() {
     input.click();
   }, []);
 
+  const handleReset = useCallback(() => {
+    const confirmed = window.confirm(
+      'Are you sure you want to reset the tier list? This will:\n\n' +
+      '• Remove all images from tiers\n' +
+      '• Clear the library\n' +
+      '• Reset to default tiers (S, A, B, C, D, E)\n\n' +
+      'This action cannot be undone!'
+    );
+    
+    if (confirmed) {
+      setLibraryImages([]);
+      setTiers(initialTiers);
+      localStorage.removeItem('tierit-library');
+      localStorage.removeItem('tierit-tiers');
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-950 transition-colors duration-200 pb-40 lg:pb-8">
       {/* Loading Overlay */}
@@ -273,11 +290,18 @@ function App() {
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-3">
+          <h1 className="text-3xl lg:text-3xl font-bold text-gray-900 dark:text-gray-100 flex items-center gap-1 lg:gap-2">
             <AppIcon />
             TierIt
           </h1>
           <div className="flex gap-2">
+            <button
+              onClick={handleReset}
+              className="px-3 lg:px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
+            >
+              <ResetIcon />
+              <span className="hidden lg:inline">Reset</span>
+            </button>
             <button
               onClick={handleSaveTierList}
               className="px-3 lg:px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg flex items-center gap-2"

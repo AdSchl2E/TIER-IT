@@ -120,6 +120,30 @@ export const ShareIcon = () => (
   </svg>
 );
 
+export const ResetIcon = () => (
+  <svg 
+    width="20" 
+    height="20" 
+    viewBox="0 0 20 20" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path 
+      d="M3 10C3 6.1 6.1 3 10 3C13.9 3 17 6.1 17 10C17 13.9 13.9 17 10 17C7.5 17 5.4 15.6 4.3 13.5" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round"
+    />
+    <path 
+      d="M6 13L3 13L3 16" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 export const ReturnIcon = () => (
   <svg 
     width="14" 
@@ -158,16 +182,16 @@ export const EditIcon = () => (
 
 export const AppIcon = () => (
   <svg 
-    width="32" 
-    height="32" 
-    viewBox="0 0 32 32" 
+    width="25" 
+    height="25" 
+    viewBox="0 0 25 25" 
     fill="none" 
     xmlns="http://www.w3.org/2000/svg"
   >
-    <rect x="2" y="4" width="28" height="6" rx="1" fill="#ff7f7f"/>
-    <rect x="2" y="11" width="28" height="6" rx="1" fill="#ffbf7f"/>
-    <rect x="2" y="18" width="28" height="6" rx="1" fill="#ffdf7f"/>
-    <rect x="2" y="25" width="28" height="5" rx="1" fill="#7fbfff"/>
+    <rect x="2" y="2" width="25" height="5" rx="1" fill="#ff7f7f"/>
+    <rect x="2" y="8" width="25" height="5" rx="1" fill="#ffbf7f"/>
+    <rect x="2" y="14" width="25" height="5" rx="1" fill="#ffdf7f"/>
+    <rect x="2" y="20" width="25" height="5" rx="1" fill="#7fbfff"/>
   </svg>
 );
 
