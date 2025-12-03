@@ -39,7 +39,3 @@ npm run preview
 - **Vite** - Build tool
 - **Tailwind CSS** - Styling
 - **html2canvas** - Image export
-
-## License
-
-MIT
