@@ -188,10 +188,10 @@ export const AppIcon = () => (
     fill="none" 
     xmlns="http://www.w3.org/2000/svg"
   >
-    <rect x="2" y="2" width="25" height="5" rx="1" fill="#ff7f7f"/>
-    <rect x="2" y="8" width="25" height="5" rx="1" fill="#ffbf7f"/>
-    <rect x="2" y="14" width="25" height="5" rx="1" fill="#ffdf7f"/>
-    <rect x="2" y="20" width="25" height="5" rx="1" fill="#7fbfff"/>
+    <rect x="0" y="2" width="25" height="5" rx="1" fill="#ff7f7f"/>
+    <rect x="0" y="8" width="25" height="5" rx="1" fill="#ffbf7f"/>
+    <rect x="0" y="14" width="25" height="5" rx="1" fill="#ffdf7f"/>
+    <rect x="0" y="20" width="25" height="5" rx="1" fill="#7fbfff"/>
   </svg>
 );
 
