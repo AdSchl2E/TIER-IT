@@ -79,7 +79,7 @@ const Library: React.FC<LibraryProps> = ({
       </div>
 
       {/* Desktop: Grid layout with vertical scroll */}
-      <div className="hidden lg:grid grid-cols-3 gap-2 min-h-[200px] max-h-[calc(100vh-240px)] overflow-y-auto p-3 bg-gray-50 dark:bg-gray-900 rounded-lg scrollbar-custom auto-rows-max">
+      <div className="hidden lg:grid grid-cols-3 gap-2 min-h-[200px] max-h-[calc(100vh-310px)] overflow-y-auto p-3 bg-gray-50 dark:bg-gray-900 rounded-lg scrollbar-custom auto-rows-max">
         {images.length === 0 ? (
           <div className="col-span-3 text-center text-gray-500 dark:text-gray-400 py-8 text-sm">
             No images yet. Click "Add Images" to get started.
