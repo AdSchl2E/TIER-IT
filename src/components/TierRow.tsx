@@ -124,7 +124,7 @@ const TierRow: React.FC<TierRowProps> = ({
       <div className="flex">
         {/* Tier Label */}
         <div
-          className="flex-shrink-0 w-24 lg:w-32 flex flex-col items-center justify-center p-2 text-white relative group"
+          className="flex-shrink-0 w-20 lg:w-32 flex flex-col items-center justify-center p-2 text-white relative group"
           style={{ backgroundColor: tierColor }}
         >
           {isEditing ? (
@@ -160,7 +160,7 @@ const TierRow: React.FC<TierRowProps> = ({
           ) : (
             <>
               <div
-                className="font-bold text-sm lg:text-lg text-center"
+                className="font-bold text-lg text-center"
               >
                 {tierName}
               </div>
