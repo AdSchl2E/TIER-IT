@@ -49,7 +49,7 @@ const TierList: React.FC<TierListProps> = ({
   }, [onUpdateTarget]);
 
   const handleDragStart = useCallback(
-    (e: React.DragEvent, item: ImageItem, tierId: string, index: number) => {
+    (_e: React.DragEvent, item: ImageItem, tierId: string, index: number) => {
       onDragStart(item, 'tier', tierId, index);
     },
     [onDragStart]
