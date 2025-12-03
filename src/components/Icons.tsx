@@ -137,3 +137,46 @@ export const AppIcon = () => (
     <rect x="2" y="25" width="28" height="5" rx="1" fill="#7fbfff"/>
   </svg>
 );
+
+export const SaveIcon = () => (
+  <svg 
+    width="20" 
+    height="20" 
+    viewBox="0 0 20 20" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path 
+      d="M15 2H3C2.4 2 2 2.4 2 3V17C2 17.6 2.4 18 3 18H17C17.6 18 18 17.6 18 17V5L15 2Z" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path 
+      d="M14 2V7H6V2M6 18V11H14V18" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+export const LoadIcon = () => (
+  <svg 
+    width="20" 
+    height="20" 
+    viewBox="0 0 20 20" 
+    fill="none" 
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path 
+      d="M3 9V3H9M17 11V17H11M3 3L8 8M17 17L12 12" 
+      stroke="currentColor" 
+      strokeWidth="2" 
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);

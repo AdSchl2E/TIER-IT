@@ -4,7 +4,7 @@ import TierList from './components/TierList';
 import { useDragManager, ImageItem, TierData } from './hooks/useDragManager';
 import { useTheme } from './context/ThemeContext';
 import { compressImage } from './utils/imageCompression';
-import { SunIcon, MoonIcon, PlusIcon, DownloadIcon, AppIcon } from './components/Icons';
+import { SunIcon, MoonIcon, PlusIcon, DownloadIcon, AppIcon, SaveIcon, LoadIcon } from './components/Icons';
 
 const initialTiers: TierData[] = [
   { id: 's', name: 'S', color: '#ff7f7f', items: [] },
@@ -201,6 +201,53 @@ function App() {
     }
   }, [theme]);
 
+  const handleSaveTierList = useCallback(() => {
+    const data = {
+      tiers,
+      libraryImages,
+      savedAt: new Date().toISOString(),
+    };
+    
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.download = `tierlist-save-${Date.now()}.json`;
+    link.href = url;
+    link.click();
+    
+    URL.revokeObjectURL(url);
+  }, [tiers, libraryImages]);
+
+  const handleLoadTierList = useCallback(() => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
+      
+      try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+        
+        if (data.tiers && Array.isArray(data.tiers)) {
+          setTiers(data.tiers);
+        }
+        if (data.libraryImages && Array.isArray(data.libraryImages)) {
+          setLibraryImages(data.libraryImages);
+        }
+      } catch (error) {
+        console.error('Error loading tier list:', error);
+        alert('Error loading tier list file');
+      }
+    };
+    
+    input.click();
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-950 transition-colors duration-200 pb-40 lg:pb-8">
       {/* Loading Overlay */}
@@ -231,6 +278,20 @@ function App() {
             TierIt
           </h1>
           <div className="flex gap-2">
+            <button
+              onClick={handleSaveTierList}
+              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
+            >
+              <SaveIcon />
+              Save
+            </button>
+            <button
+              onClick={handleLoadTierList}
+              className="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
+            >
+              <LoadIcon />
+              Load
+            </button>
             <button
               onClick={handleExportImage}
               className="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
