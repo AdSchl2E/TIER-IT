@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import DraggableImage from './DraggableImage';
 import { ImageItem } from '../hooks/useDragManager';
 import { PlusIcon, TrashIcon } from './Icons';
@@ -21,6 +21,8 @@ const Library: React.FC<LibraryProps> = ({
   draggedItemId,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [showButtonsForId, setShowButtonsForId] = useState<string | null>(null);
+  const hideTimeoutRef = useRef<number | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -30,6 +32,21 @@ const Library: React.FC<LibraryProps> = ({
 
   const handleButtonClick = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleImageTap = (imageId: string) => {
+    // Clear existing timeout
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+    }
+    
+    // Show buttons for this image
+    setShowButtonsForId(imageId);
+    
+    // Hide after 2 seconds
+    hideTimeoutRef.current = window.setTimeout(() => {
+      setShowButtonsForId(null);
+    }, 2000);
   };
 
   return (
@@ -79,11 +96,10 @@ const Library: React.FC<LibraryProps> = ({
       </div>
 
       {/* Desktop: Grid layout with vertical scroll */}
-      <div className="hidden lg:grid grid-cols-3 gap-2 max-h-[calc(100vh-240px)] overflow-y-auto p-3 bg-gray-50 dark:bg-gray-900 rounded-lg scrollbar-custom auto-rows-max">
+      <div className="hidden lg:grid grid-cols-3 gap-2 min-h-[200px] max-h-[calc(100vh-240px)] overflow-y-auto p-3 bg-gray-50 dark:bg-gray-900 rounded-lg scrollbar-custom auto-rows-max">
         {images.length === 0 ? (
           <div className="col-span-3 text-center text-gray-500 dark:text-gray-400 py-8 text-sm">
-            No images yet.<br />
-            Click "Add Images" to get started.
+            No images yet. Click "Add Images" to get started.
           </div>
         ) : (
           images.map((item) => (
@@ -113,7 +129,11 @@ const Library: React.FC<LibraryProps> = ({
           </div>
         ) : (
           images.map((item) => (
-            <div key={item.id} className="relative group w-20 h-20 flex-shrink-0">
+            <div 
+              key={item.id} 
+              className="relative w-20 h-20 flex-shrink-0"
+              onClick={() => handleImageTap(item.id)}
+            >
               <DraggableImage
                 item={item}
                 onDragStart={onDragStart}
@@ -121,8 +141,13 @@ const Library: React.FC<LibraryProps> = ({
                 isDragging={item.id === draggedItemId}
               />
               <button
-                onClick={() => onImageDelete(item.id)}
-                className="absolute top-1 right-1 p-1 bg-red-500 hover:bg-red-600 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onImageDelete(item.id);
+                }}
+                className={`absolute top-1 right-1 p-1 bg-red-500 hover:bg-red-600 text-white rounded transition-opacity ${
+                  showButtonsForId === item.id ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+                }`}
               >
                 <TrashIcon />
               </button>

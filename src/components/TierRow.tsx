@@ -49,6 +49,10 @@ const TierRow: React.FC<TierRowProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState(tierName);
   const [editColor, setEditColor] = useState(tierColor);
+  const [showTierButtons, setShowTierButtons] = useState(false);
+  const [showImageButtonsForId, setShowImageButtonsForId] = useState<string | null>(null);
+  const tierButtonsTimeoutRef = useRef<number | null>(null);
+  const imageButtonsTimeoutRef = useRef<number | null>(null);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -117,6 +121,36 @@ const TierRow: React.FC<TierRowProps> = ({
     setIsEditing(false);
   };
 
+  const handleTierLabelTap = () => {
+    // Clear existing timeout
+    if (tierButtonsTimeoutRef.current) {
+      clearTimeout(tierButtonsTimeoutRef.current);
+    }
+    
+    // Show tier buttons
+    setShowTierButtons(true);
+    
+    // Hide after 2 seconds
+    tierButtonsTimeoutRef.current = window.setTimeout(() => {
+      setShowTierButtons(false);
+    }, 2000);
+  };
+
+  const handleImageTap = (imageId: string) => {
+    // Clear existing timeout
+    if (imageButtonsTimeoutRef.current) {
+      clearTimeout(imageButtonsTimeoutRef.current);
+    }
+    
+    // Show buttons for this image
+    setShowImageButtonsForId(imageId);
+    
+    // Hide after 2 seconds
+    imageButtonsTimeoutRef.current = window.setTimeout(() => {
+      setShowImageButtonsForId(null);
+    }, 2000);
+  };
+
   const isShowingPlaceholder = targetTierId === tierId && draggedItemId;
 
   return (
@@ -124,8 +158,9 @@ const TierRow: React.FC<TierRowProps> = ({
       <div className="flex">
         {/* Tier Label */}
         <div
-          className="flex-shrink-0 w-32 flex flex-col items-center justify-center p-2 text-white relative group"
+          className="flex-shrink-0 w-20 lg:w-32 flex flex-col items-center justify-center p-2 text-white relative group"
           style={{ backgroundColor: tierColor }}
+          onClick={handleTierLabelTap}
         >
           {isEditing ? (
             <div className="flex flex-col gap-2 w-full">
@@ -166,14 +201,24 @@ const TierRow: React.FC<TierRowProps> = ({
               </div>
               <div className="absolute top-1 right-1 flex gap-1">
                 <button
-                  onClick={() => setIsEditing(true)}
-                  className="p-1 bg-blue-500 hover:bg-blue-600 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsEditing(true);
+                  }}
+                  className={`p-1 bg-blue-500 hover:bg-blue-600 rounded transition-opacity lg:opacity-0 lg:group-hover:opacity-100 ${
+                    showTierButtons ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none lg:pointer-events-auto'
+                  }`}
                 >
                   <EditIcon />
                 </button>
                 <button
-                  onClick={() => onDelete(tierId)}
-                  className="p-1 bg-red-500 hover:bg-red-600 rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(tierId);
+                  }}
+                  className={`p-1 bg-red-500 hover:bg-red-600 rounded transition-opacity lg:opacity-0 lg:group-hover:opacity-100 ${
+                    showTierButtons ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none lg:pointer-events-auto'
+                  }`}
                 >
                   <TrashIcon />
                 </button>
@@ -204,7 +249,10 @@ const TierRow: React.FC<TierRowProps> = ({
                 {isShowingPlaceholder && targetIndex === index && (
                   <DropPlaceholder isVisible={true} orientation="vertical" />
                 )}
-                <div className="relative group w-20 h-20">
+                <div 
+                  className="relative group w-20 h-20"
+                  onClick={() => handleImageTap(item.id)}
+                >
                   <DraggableImage
                     item={item}
                     onDragStart={(e) => onDragStart(e, item, tierId, index)}
@@ -212,8 +260,13 @@ const TierRow: React.FC<TierRowProps> = ({
                     isDragging={item.id === draggedItemId}
                   />
                   <button
-                    onClick={() => onReturnToLibrary(item, tierId)}
-                    className="absolute top-1 right-1 p-1 bg-blue-500 hover:bg-blue-600 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onReturnToLibrary(item, tierId);
+                    }}
+                    className={`absolute top-1 right-1 p-1 bg-blue-500 hover:bg-blue-600 text-white rounded transition-opacity lg:opacity-0 lg:group-hover:opacity-100 ${
+                      showImageButtonsForId === item.id ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none lg:pointer-events-auto'
+                    }`}
                   >
                     <ReturnIcon />
                   </button>
